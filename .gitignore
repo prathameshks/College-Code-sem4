@@ -1,0 +1,10 @@
+*.out
+*.exe
+.vscode
+~*.*
+tempCodeRunnerFile.*
+/OOPL/StudentData.txt
+./sample.cpp
+temp 
+sahil*.*
+*.o
