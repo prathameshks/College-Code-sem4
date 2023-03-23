@@ -166,12 +166,36 @@ def input_records(n: int) -> list[list]:
 def main() -> None:
     n = int(input("Enter the total number of records:"))
     records = input_records(n)
-    t1 = HashTable1(n)
-    # t2 = HashTable2(n)
-    t1.generate_table(records)
-    t1.display_table()
-    # t2.generate_table(records)
-    # t2.display_table()
+    ch = 1
+    while(ch != 5):
+        print("MENU")
+        print("1. Input Records")
+        print("2. Use linear Probing Without Replacement")
+        print("3. Use linear Probing With Replacement")
+        print("4. Use Double Hashing")
+        print("5. Exit")
+
+        ch = int(input("Enter your choice:"))
+        match (ch):
+            case 1:
+                n = int(input("Enter the total number of records:"))
+                records = input_records(n)
+            case 2:
+                t1 = HashTable1(n)
+                t1.generate_table(records)
+                t1.display_table()
+            case 3:
+                t2 = HashTable2(n)
+                t2.generate_table(records)
+                t2.display_table()
+            case 4:
+                t3 = HashTable3(n)
+                t3.generate_table(records)
+                t3.display_table()
+            case 5:
+                print("Thank you !")
+            case default:
+                print("Invalid Choice")
 
 
 if __name__ == "__main__":
@@ -180,13 +204,13 @@ if __name__ == "__main__":
 """
 5
 sahil
-963
-akhil
-783
+9874515963
+akhilesh
+9764512783
 yash
-664
-om
-555
-parthya
-622
+7851226664
+omkar
+8451225555
+kaustubh
+9461564622
 """

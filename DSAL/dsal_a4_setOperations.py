@@ -31,6 +31,9 @@ class sets:
     def size(self) -> int:
         return len(self.data)
 
+    def iterator(self):
+        return self.data.__iter__
+
     def intersection(self, set2: set) -> set:
         ans = set()
         set1 = list(set2)
@@ -50,11 +53,15 @@ class sets:
         ans = self.data.copy()
         set1 = list(set2)
         for elmt in set1:
-            ans.remove(elmt)
+            if elmt in ans:
+                ans.remove(elmt)
         return ans
 
     def subset(self, set2: set) -> set:
-        return self.data.issubset(set2)
+        for e in set2:
+            if e not in self.data:
+                return False
+        return True
 
     def display(self) -> None:
         print(self.data)
@@ -67,22 +74,26 @@ def input_set() -> set:
         ans.add(int(input(f"Enter element {i+1}:")))
     return ans
 
+def menu():
+    print("MENU")
+    print("1.Add new element")
+    print("2.Remove element")
+    print("3.Search element")
+    print("4.Display Size of Set")
+    print("5.Intersection of Sets")
+    print("6.Union of Sets")
+    print("7.Difference of Sets")
+    print("8.Check if subset of Set")
+    print("9.Display Set")
+    print("10. exit")
+    print("0.Display Menu")
 
 def main() -> None:
     s1 = sets()
     choice = 1
-    while (choice != 0):
-        print("MENU")
-        print("1.Add new element")
-        print("2.Remove element")
-        print("3.Search element")
-        print("4.Display Size of Set")
-        print("5.Intersection of Sets")
-        print("6.Union of Sets")
-        print("7.Difference of Sets")
-        print("8.Check if subset of Set")
-        print("0. exit")
-        choice = int(input("Enter Your Choice:"))
+    menu()
+    while (choice != 10):
+        choice = int(input("Enter Your Choice(0 for MENU):"))
         match (choice):
             case (1):
                 n = int(input("Enter Number to add:"))
@@ -95,9 +106,9 @@ def main() -> None:
                 else:
                     print("Element Not present in set")
             case (3):
-                n = int(input("Enter Number to Remove:"))
+                n = int(input("Enter Number to Find:"))
                 if (s1.contains(n)):
-                    print("Element Removed sucessfully")
+                    print("Element Present in set")
                 else:
                     print("Element Not present in set")
             case (4):
@@ -117,8 +128,12 @@ def main() -> None:
                     print("Set is Subset")
                 else:
                     print("Set is Not subset")
-            case (0):
+            case (9):
+                s1.display()
+            case (10):
                 print("Thank You!")
+            case (0):
+                menu()
             case default:
                 print("Invalid Choice")
 
