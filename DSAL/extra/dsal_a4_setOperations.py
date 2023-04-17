@@ -1,14 +1,22 @@
-class sets:
-    """Implementation using list"""
-    def __init__(self) -> None:
-            self.data = []
+from __future__ import annotations
 
-    def get_iter(self) -> iter:
-        return iter(self.data)
+
+class sets:
+    """Using Inbuild Functions"""
+
+    def __init__(self) -> None:
+        self.data = set()
+
+    def get_data(self) -> set:
+        return self.data
+
+    def extend(self, lst: any) -> None:
+        data = list(lst)
+        for elmt in data:
+            self.data.add(elmt)
 
     def add(self, elmt: any) -> None:
-        if (elmt not in self.data):
-            self.data.append(elmt)
+        self.data.add(elmt)
 
     def remove(self, elmt: any) -> bool:
         if (elmt in self.data):
@@ -21,45 +29,42 @@ class sets:
         return (elmt in self.data)
 
     def size(self) -> int:
-        l = 0
-        iter1 = self.get_iter()
-        for elmt in iter1:
-            l += 1
-        return l
+        return len(self.data)
 
-    def intersection(self, input_set: any) -> list:
-        ans = []
-        set1 = list(input_set)
+    def iterator(self):
+        return self.data.__iter__
+
+    def intersection(self, set2: set) -> set:
+        ans = set()
+        set1 = list(set2)
         for elmt in set1:
             if (elmt in self.data):
-                ans.append(elmt)
+                ans.add(elmt)
         return ans
 
-    def union(self, input_set: any) -> list:
-        ans = self.data.copy()
-        set1 = list(input_set)
+    def union(self, set2: set) -> set:
+        ans = set()
+        set1 = list(set2)
         for elmt in set1:
-            if (elmt not in self.data):
-                ans.append(elmt)
+            ans.add(elmt)
         return ans
 
-    def difference(self, input_set: any) -> list:
+    def difference(self, set2: set) -> set:
         ans = self.data.copy()
-        set1 = list(input_set)
+        set1 = list(set2)
         for elmt in set1:
             if elmt in ans:
                 ans.remove(elmt)
         return ans
 
-    def subset(self, input_set: any) -> bool:
-        for e in input_set:
+    def subset(self, set2: set) -> set:
+        for e in set2:
             if e not in self.data:
                 return False
         return True
 
     def display(self) -> None:
-        str_set = str(self.data)
-        print(str_set.replace('[', '{').replace(']', '}'))
+        print(self.data)
 
 
 def input_set() -> set:
@@ -68,12 +73,6 @@ def input_set() -> set:
     for i in range(n):
         ans.add(int(input(f"Enter element {i+1}:")))
     return ans
-
-
-def print_set(lst: list) -> None:
-    str_set = str(lst)
-    print(str_set.replace('[', '{').replace(']', '}'))
-
 
 def menu():
     print("MENU")
@@ -88,7 +87,6 @@ def menu():
     print("9.Display Set")
     print("10. exit")
     print("0.Display Menu")
-
 
 def main() -> None:
     s1 = sets()
@@ -117,16 +115,13 @@ def main() -> None:
                 print("Size of the set is ", s1.size())
             case (5):
                 s = input_set()
-                print("Intersection of sets is ", end="")
-                print_set(s1.intersection(s))
+                print("Intersection of sets is ", s1.intersection(s))
             case (6):
                 s = input_set()
-                print("Union of sets is ", end="")
-                print_set(s1.union(s))
+                print("Union of sets is ", s1.union(s))
             case (7):
                 s = input_set()
-                print("Difference of sets is ", end="")
-                print_set(s1.difference(s))
+                print("Difference of sets is ", s1.difference(s))
             case (8):
                 s = input_set()
                 if (s1.subset(s)):
@@ -141,6 +136,7 @@ def main() -> None:
                 menu()
             case default:
                 print("Invalid Choice")
+
 
 if __name__ == "__main__":
     main()
