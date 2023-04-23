@@ -111,8 +111,51 @@ bool bst::delete_key(string key) {
     node *temp, *prev;
     prev = root;
     temp = root;
+
+    if (temp->key == key) {
+        // delete root case
+        if (temp->left == NULL && temp->right == NULL) {
+            // no child
+            root = NULL;
+            delete temp;
+        } else if (temp->left != NULL && temp->right == NULL) {
+            // single child left
+            root = temp->left;
+            delete temp;
+        } else if (temp->left == NULL && temp->right != NULL) {
+            // single child right
+            root = temp->right;
+            delete temp;
+        } else {
+            // two child
+            // using left largest
+            node *l_temp = temp->left;
+            node *l_prev = temp;
+            if (l_temp->right == NULL) {
+                l_prev->left = l_temp->left;
+            } else {
+                while (l_temp->right != NULL) {
+                    l_prev = l_temp;
+                    l_temp = l_temp->right;
+                }
+                l_prev->right = l_temp->left;
+            }
+
+            // deleting temp
+            l_temp->right = temp->right;
+            l_temp->left = temp->left;
+            root = l_temp;
+            delete temp;
+        }
+        return 1;
+    } else if (temp->key < key) {
+        temp = temp->right;
+    } else {
+        temp = temp->left;
+    }
+
     while (temp != NULL) {
-        prev = temp;
+        // delete non root node
         if (temp->key == key) {
             if (temp->left == NULL && temp->right == NULL) {
                 // no child
@@ -151,9 +194,14 @@ bool bst::delete_key(string key) {
                 // using left largest
                 node *l_temp = temp->left;
                 node *l_prev = temp;
-                while (l_temp != NULL) {
-                    l_prev = l_temp;
-                    l_temp = l_temp->right;
+                if (l_temp->right == NULL) {
+                    l_prev->left = l_temp->left;
+                } else {
+                    while (l_temp->right != NULL) {
+                        l_prev = l_temp;
+                        l_temp = l_temp->right;
+                    }
+                    l_prev->right = l_temp->left;
                 }
 
                 // deleting temp
@@ -164,19 +212,16 @@ bool bst::delete_key(string key) {
                     // right child
                     prev->right = l_temp;
                 }
-                if (l_temp == temp->left) {
-                    l_prev->left = NULL;
-                } else {
-                    l_prev->right = NULL;
-                }
                 l_temp->left = temp->left;
                 l_temp->right = temp->right;
                 delete temp;
             }
             return 1;
         } else if (temp->key < key) {
+            prev = temp;
             temp = temp->right;
         } else {
+            prev = temp;
             temp = temp->left;
         }
     }
@@ -201,6 +246,16 @@ void bst::display_asc(node *cur) {
     display_asc(cur->left);
 }
 
+// void printTree(node *root, int space = 0, int height = 20) {
+//     if (root == nullptr) return;
+//     space += height;
+//     printTree(root->right, space);
+//     cout << endl;
+//     for (int i = height; i < space; i++) cout << " ";
+//     cout << root->key << endl;
+//     printTree(root->left, space);
+// }
+
 int main() {
     bst tree;
     int ch;
@@ -223,7 +278,7 @@ int main() {
                 cout << "Enter value:";
                 cin >> v;
                 if (tree.insert(k, v)) {
-                    cout << "Element Inserted Sucessfully" << endl;
+                    cout << "Element Inserted Successfully" << endl;
                 } else {
                     cout << "Element Already Present" << endl;
                 }
@@ -244,7 +299,7 @@ int main() {
                 cout << "Enter new value:";
                 cin >> v;
                 if (tree.update(k, v)) {
-                    cout << "Element Updated Sucessfully" << endl;
+                    cout << "Element Updated Successfully" << endl;
                 } else {
                     cout << "Element Not Present" << endl;
                 }
@@ -253,7 +308,7 @@ int main() {
                 cout << "Enter key to Delete:";
                 cin >> k;
                 if (tree.delete_key(k)) {
-                    cout << "Element Deleted Sucessfully" << endl;
+                    cout << "Element Deleted Successfully" << endl;
                 } else {
                     cout << "Element Not Present" << endl;
                 }
@@ -289,16 +344,21 @@ parth desai
 omkar chougule
 1
 yash jadhav
+1
+zara company
+1
+petha seth
+1
+aakbar raja
 
 
-
-        akhilesh
-                \
-                shivam
-                /   \
-            parth   yash
-            /
-        omkar
+         akhilesh
+        /        \
+    aakbar      shivam
+                /     \
+            parth     yash
+            /   \        \
+        omkar  petha     zara
 
 
 */

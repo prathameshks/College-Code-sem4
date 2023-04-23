@@ -5,105 +5,73 @@ entire tree.
 */
 
 #include <iostream>
-#include <stack>
 #include <map>
-// #include <unordered_map>
+#include <stack>
+
 using namespace std;
 
-class node
-{
-public:
+class node {
+   public:
     char data;
     node *left, *right;
-    node()
-    {
+    node() {
         left = NULL;
         right = NULL;
     }
 
-    node(char ch)
-    {
+    node(char ch) {
         data = ch;
         left = NULL;
         right = NULL;
     }
 };
 
-class tree
-{
-private:
+class tree {
+   private:
     node *root;
-
     stack<node *> nodestack;
 
-    bool isOperator(char ch)
-    {
-        switch (ch)
-        {
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-            return 1;
-            break;
-
-        default:
-            return 0;
-            break;
+    bool isOperator(char ch) {
+        switch (ch) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                return 1;
+                break;
+            default:
+                return 0;
+                break;
         }
     }
 
-    void insert(char ch)
-    {
-        if (isOperator(ch))
-        {
+    void insert(char ch) {
+        if (isOperator(ch)) {
             node *newnode = new node(ch);
             newnode->left = nodestack.top();
             nodestack.pop();
             newnode->right = nodestack.top();
             nodestack.pop();
             nodestack.push(newnode);
-        }
-        else
-        {
+        } else {
             node *newnode = new node(ch);
             nodestack.push(newnode);
         }
     }
 
-    void postfix(node *temp)
-    {
-        if (temp != NULL)
-        {
-            postfix(temp->left);
-            postfix(temp->right);
-            cout << temp->data;
-        }
-    }
-
-public:
-    void input_prefix(string exp)
-    {
-        for (int i = exp.length() - 1; i > -1; i--)
-        {
+   public:
+    void input_prefix(string exp) {
+        for (int i = exp.length() - 1; i > -1; i--) {
             insert(exp[i]);
         }
         root = nodestack.top();
         nodestack.pop();
     }
 
-    void display_postfix()
-    {
-        cout << "Postfix Expression Is" << endl;
-        postfix(root);
-        cout << endl;
-    }
+    void display_postfix() {
+        node *temp = root;
 
-    void display_postfix_NR()
-    {
-        node* temp = root;
-
-        stack<node*> stack1, stack2;
+        stack<node *> stack1, stack2;
 
         stack1.push(root);
 
@@ -124,15 +92,17 @@ public:
             cout << temp->data;
         }
 
-        cout<<endl;
+        cout << endl;
     }
 };
 
-int main()
-{
+int main() {
     tree exp_tree;
-    string e = "+--a*bc/def";
+    string e;
+    cout << "Enter Prefix Expression:";
+    cin >> e;
     exp_tree.input_prefix(e);
-    exp_tree.display_postfix_NR();
+    exp_tree.display_postfix();
     return 0;
 }
+// +--a*bc/def
