@@ -1,9 +1,9 @@
 /*
-Department maintains a student information. The file contains roll number, name,
-division and address. Allow user to add, delete information of student. Display
-information of particular student. If record of student does not exist an
-appropriate message is displayed. If it is, then the system displays the student
-details. Use sequential file to main the data.
+Company maintains employee information as employee ID, name, designation and
+salary. Allow user to add, delete information of employee. Display information
+of particular employee. If employee does not exist an appropriate message is
+displayed. If it is, then the system displays the employee details. Use index
+sequential file to maintain the data.
 */
 
 #include <cstring>
@@ -11,18 +11,18 @@ details. Use sequential file to main the data.
 #include <iostream>
 using namespace std;
 
-typedef struct student {
-    int rollNo;
+typedef struct employee {
+    int empIdNo;
     char name[50];
-    char div;
-    char address[100];
-} student;
+    char designation[50];
+    int salary;
+} employee;
 
-class studentDatabase {
-    string fileName = "student_data.dat";
+class employeeDatabase {
+    string fileName = "employee_data.dat";
 
    public:
-    studentDatabase() {
+    employeeDatabase() {
         fstream fileObj(fileName);
         if (fileObj.fail()) {
             fileObj.open(fileName, ios::out);
@@ -33,28 +33,28 @@ class studentDatabase {
         fileObj.close();
     }
 
-    void addStudent();
-    void searchStudent();
-    void deleteStudent();
+    void addEmployee();
+    void searchEmployee();
+    void deleteEmployee();
     void displayAll();
 };
 
-void studentDatabase::searchStudent() {
-    int roll;
-    student s;
+void employeeDatabase::searchEmployee() {
+    int empId;
+    employee emp;
     bool status = false;
 
-    // take input of roll number to delete
-    cout << "Enter roll number to delete:";
-    cin >> roll;
+    // take input of empId number to delete
+    cout << "Enter Employee Id to delete:";
+    cin >> empId;
 
     // opening files to delete a record
     ifstream readFile;
     readFile.open(fileName, ios::in | ios::binary);
 
     // looking for record
-    while (readFile.read((char*)&s, sizeof(student))) {
-        if (s.rollNo == roll) {
+    while (readFile.read((char*)&emp, sizeof(employee))) {
+        if (emp.empIdNo == empId) {
             status = true;
             break;
         }
@@ -63,23 +63,23 @@ void studentDatabase::searchStudent() {
 
     if (status) {
         cout << "Found record with details" << endl;
-        cout << "Roll No:" << s.rollNo << endl;
-        cout << "Name:" << s.name << endl;
-        cout << "Division:" << s.div << endl;
-        cout << "Address:" << s.address << endl;
+        cout << "Employee ID:" << emp.empIdNo << endl;
+        cout << "Name:" << emp.name << endl;
+        cout << "Designation:" << emp.designation << endl;
+        cout << "Salary:" << emp.salary << endl;
     } else {
         cout << "No record found" << endl;
     }
 }
 
-void studentDatabase::deleteStudent() {
-    int roll;
-    student s;
+void employeeDatabase::deleteEmployee() {
+    int empId;
+    employee emp;
     bool status = false;
 
-    // take input of roll number to delete
-    cout << "Enter roll number to delete:";
-    cin >> roll;
+    // take input of empId number to delete
+    cout << "Enter Employee Id to delete:";
+    cin >> empId;
 
     // opening files to delete a record
     ifstream readFile;
@@ -89,11 +89,11 @@ void studentDatabase::deleteStudent() {
     writeFile.clear();
 
     // looking for record
-    while (readFile.read((char*)&s, sizeof(student))) {
-        if (s.rollNo == roll) {
+    while (readFile.read((char*)&emp, sizeof(employee))) {
+        if (emp.empIdNo == empId) {
             status = true;
         } else {
-            writeFile.write((char*)&s, sizeof(student)) << flush;
+            writeFile.write((char*)&emp, sizeof(employee)) << flush;
         }
     }
     readFile.close();
@@ -116,43 +116,42 @@ void studentDatabase::deleteStudent() {
     }
 }
 
-void studentDatabase::addStudent() {
-    student s;
-    cout << "Enter Roll number of student:";
-    cin >> s.rollNo;
-    cout << "Enter Name of student:";
+void employeeDatabase::addEmployee() {
+    employee emp;
+    cout << "Enter Employee Id of employee:";
+    cin >> emp.empIdNo;
+    cout << "Enter Name of employee:";
     cin.ignore();
-    cin.getline(s.name, 50);
-    cout << "Enter Division of student:";
+    cin.getline(emp.name, 50);
+    cout << "Enter Designation of employee:";
     // cin.ignore();
-    cin >> s.div;
-    cout << "Enter Address of student:";
-    cin.ignore();
-    cin.getline(s.address, 100);
+    cin.getline(emp.designation, 50);
+    cout << "Enter Salary of employee:";
+    cin >> emp.salary;
     // cin.ignore();
     ofstream file(fileName, ios::out | ios::binary | ios::app);
     // file.seekp(ios::end);
-    file.write((char*)&s, sizeof(student)) << flush;
+    file.write((char*)&emp, sizeof(employee)) << flush;
     if (file.fail()) {
         cout << "Failed to add record" << endl;
     } else {
-        cout << "Student record added successfully" << endl;
+        cout << "Employee record added successfully" << endl;
     }
     file.close();
 }
 
-void studentDatabase::displayAll() {
+void employeeDatabase::displayAll() {
     ifstream file;
-    student s;
+    employee emp;
     int count = 0;
     file.open(fileName, ios::in | ios::binary);
-    while (file.read((char*)&s, sizeof(student))) {
+    while (file.read((char*)&emp, sizeof(employee))) {
         count++;
         cout << count << ") ";
-        cout << s.rollNo << "|";
-        cout << s.name << "|";
-        cout << s.div << "|";
-        cout << s.address << endl;
+        cout << emp.empIdNo << "|";
+        cout << emp.name << "|";
+        cout << emp.designation << "|";
+        cout << emp.salary << endl;
     }
     if (count == 0) {
         cout << "No records Found" << endl;
@@ -161,9 +160,8 @@ void studentDatabase::displayAll() {
 }
 int main() {
     int ch;
-    studentDatabase db;
+    employeeDatabase db;
 
-    // loop
     do {
         cout << endl;
         cout << "MENU" << endl;
@@ -179,13 +177,13 @@ int main() {
                 cout << "Thank You" << endl;
                 break;
             case 1:
-                db.addStudent();
+                db.addEmployee();
                 break;
             case 2:
-                db.deleteStudent();
+                db.deleteEmployee();
                 break;
             case 3:
-                db.searchStudent();
+                db.searchEmployee();
                 break;
             case 4:
                 cout << "Records in File are" << endl;
