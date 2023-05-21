@@ -4,7 +4,7 @@ from tkinter import messagebox
 import random
 from PIL import ImageTk, Image
 
-# Define the size of the board
+# Define the variables
 BOARD_SIZE = 600
 player_1_pos = 0
 player_2_pos = 0
@@ -20,13 +20,16 @@ root = tk.Tk()
 root.title("Snakes and Ladders")
 root.geometry(f"{BOARD_SIZE+250}x{BOARD_SIZE}")
 
+# disable screen resize
+root.resizable(False, False)
 
 # board image
 img = ImageTk.PhotoImage(Image.open(
     "board_image.png").resize((BOARD_SIZE, BOARD_SIZE)))
 
 # Load the dice images
-dice_images = [ImageTk.PhotoImage(Image.open(f"dice/dice-{i}.png").resize((40,40))) for i in range(1, 7)]
+dice_images = [ImageTk.PhotoImage(Image.open(
+    f"dice/dice-{i}.png").resize((40, 40))) for i in range(1, 7)]
 
 # Create the canvas
 canvas = tk.Canvas(root, width=BOARD_SIZE, height=BOARD_SIZE, bg="red")
@@ -34,10 +37,10 @@ canvas.create_image(0, 0, anchor=tk.NW, image=img)
 
 canvas.grid(row=0, column=0, rowspan=11)
 
-title_label = tk.Label(root, text="Snakes and Ladders",font=("Helvetica", 16))
+title_label = tk.Label(root, text="Snakes and Ladders", font=("Helvetica", 16))
 title_label.grid(row=0, column=1, columnspan=2)
 
-score_label = tk.Label(root, text="Score",font=("Helvetica", 12))
+score_label = tk.Label(root, text="Score", font=("Helvetica", 12))
 score_label.grid(row=1, column=1, columnspan=2)
 
 pl1_lab = tk.Label(root, text="Player 1")
@@ -188,7 +191,7 @@ turn_label.grid(row=4, column=1, columnspan=2)
 
 dice_label = tk.Label(root, text="Dice")
 button = tk.Button(root, text="Roll Dice", command=play)
-dice_label.grid(row=5, column=1,columnspan=2,rowspan=2)
+dice_label.grid(row=5, column=1, columnspan=2, rowspan=2)
 button.grid(row=7, column=1, columnspan=2)
 
 speed_label = tk.Label(root, text="Speed")
