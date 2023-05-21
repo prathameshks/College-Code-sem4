@@ -17,6 +17,9 @@ ladders = {1: 38, 4: 14, 8: 30, 21: 42, 28: 76, 50: 67, 71: 92, 80: 99}
 
 # Create the root window
 root = tk.Tk()
+root.title("Snakes and Ladders")
+root.geometry(f"{BOARD_SIZE+250}x{BOARD_SIZE}")
+
 
 # board image
 img = ImageTk.PhotoImage(Image.open(
@@ -29,18 +32,24 @@ dice_images = [ImageTk.PhotoImage(Image.open(f"dice/dice-{i}.png").resize((40,40
 canvas = tk.Canvas(root, width=BOARD_SIZE, height=BOARD_SIZE, bg="red")
 canvas.create_image(0, 0, anchor=tk.NW, image=img)
 
-canvas.grid(row=0, column=0, columnspan=2)
+canvas.grid(row=0, column=0, rowspan=11)
+
+title_label = tk.Label(root, text="Snakes and Ladders",font=("Helvetica", 16))
+title_label.grid(row=0, column=1, columnspan=2)
+
+score_label = tk.Label(root, text="Score",font=("Helvetica", 12))
+score_label.grid(row=1, column=1, columnspan=2)
 
 pl1_lab = tk.Label(root, text="Player 1")
 pl2_lab = tk.Label(root, text="Player 2")
 pl1_score = tk.Label(root, text="0")
 pl2_score = tk.Label(root, text="0")
 
-pl1_lab.grid(row=1, column=0)
-pl1_score.grid(row=1, column=1)
+pl1_lab.grid(row=2, column=1)
+pl1_score.grid(row=2, column=2)
 
-pl2_lab.grid(row=2, column=0)
-pl2_score.grid(row=2, column=1)
+pl2_lab.grid(row=3, column=1)
+pl2_score.grid(row=3, column=2)
 
 
 def get_cords(pos):
@@ -175,19 +184,25 @@ def play():
 
 
 turn_label = tk.Label(root, text="Player 1's turn")
-turn_label.grid(row=3, column=0, columnspan=2)
+turn_label.grid(row=4, column=1, columnspan=2)
 
 dice_label = tk.Label(root, text="Dice")
 button = tk.Button(root, text="Roll Dice", command=play)
-dice_label.grid(row=4, column=0)
-button.grid(row=4, column=1)
+dice_label.grid(row=5, column=1,columnspan=2,rowspan=2)
+button.grid(row=7, column=1, columnspan=2)
 
 speed_label = tk.Label(root, text="Speed")
-speed_label.grid(row=5, column=0)
+speed_label.grid(row=8, column=1, columnspan=2)
 speed_select = tk.Scale(root, from_=0.1, to=1, resolution=0.1,
                         orient=tk.HORIZONTAL, length=200, command=update_speed)
-speed_select.grid(row=5, column=1)
+speed_select.grid(row=9, column=1, columnspan=2)
 speed_select.set(0.5)
+
+btn_reset = tk.Button(root, text="Reset", command=reset)
+btn_reset.grid(row=10, column=1)
+
+btn_exit = tk.Button(root, text="Exit", command=root.destroy)
+btn_exit.grid(row=10, column=2)
 
 
 root.mainloop()
