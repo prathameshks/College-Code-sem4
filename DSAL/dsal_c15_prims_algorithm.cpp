@@ -9,6 +9,7 @@ suggesting appropriate data structures*/
 #include <vector>
 using namespace std;
 
+// prims algo with adjacency matrix
 class graph {
    private:
     vector<vector<int>> ajd_matrix;
@@ -93,9 +94,90 @@ graph::graph() {
     }
 }
 
+// prims algo with adjacency list
+
+class graph2 {
+   private:
+    vector<vector<int>> adj_list;
+    vector<vector<int>> ajd_matrix;
+    vector<string> cities;
+    vector<vector<int>> mst;
+    int num_of_vertices;
+    int weight_of_mst;
+
+   public:
+    graph2() {
+        string city;
+        cout << "Enter number of Cities: ";
+        cin >> num_of_vertices;
+        adj_list.resize(num_of_vertices);
+        for (int i = 0; i < num_of_vertices; i++) {
+            cout << "Enter city name: ";
+            cin >> city;
+            cities.push_back(city);
+        }
+        int cost;
+        for (int i = 0; i < num_of_vertices; i++) {
+            for (int j = i + 1; j < num_of_vertices; j++) {
+                cout << "Enter Cost of line Between city " << cities[i]
+                     << " and " << cities[j] << "(-1 for no line): ";
+                cin >> cost;
+                if (cost != -1) {
+                    adj_list[i].push_back({j, cost});
+                    adj_list[j].push_back({i, cost});
+                }
+            }
+        }
+
+    }
+
+    bool notin(vector<int> b, int a) {
+        for (int element : b) {
+            if (element == a) return false;
+        }
+        return true;
+    }
+
+    int city_count() { return num_of_vertices; }
+
+    void prims_algo(int start_city) {
+        vector<int> visited;
+        weight_of_mst = 0;
+        visited.push_back(start_city);
+
+        while (visited.size() != num_of_vertices) {
+            int min_line = INT32_MAX;
+            int min_to = 0;
+            int min_from = 0;
+            for (int from_city : visited) {
+                for (auto to_city : adj_list[from_city]) {
+                    if (notin(visited, to_city.first)) {
+                        if (to_city.second < min_line) {
+                            min_line = to_city.second;
+                            min_to = to_city.first;
+                            min_from = from_city;
+                        }
+                    }
+                }
+            }
+            visited.push_back(min_to);
+            mst.push_back({min_from, min_to});
+            weight_of_mst += min_line;
+        }
+    }
+
+    void display_mst() {
+        for (auto edge : mst) {
+            cout << cities[edge[0]] << " to " << cities[edge[1]] << " = "
+                 << adj_list[edge[0]][edge[1]].second << endl;
+        }
+        cout << "\n Weight of MST is " << weight_of_mst << endl;
+    }
+};
+
 int main() {
     int start_city;
-    graph g;
+    graph2 g;
     cout << "Enter starting city of network: ";
     cin >> start_city;
     if (start_city >= g.city_count()) {
