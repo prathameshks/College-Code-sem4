@@ -83,11 +83,13 @@ void graph::prims_algo(int start) {
     visited[start] = 1;
     vector<edge> adj;
     for (int i = 0; i < city_count; i++) {
-        edge e;
-        e.start = start;
-        e.end = i;
-        e.wt = adj_mat[start][i];
-        add_to_list(adj, e);
+        if (adj_mat[start][i] != INT32_MAX) {
+            edge e;
+            e.start = start;
+            e.end = i;
+            e.wt = adj_mat[start][i];
+            add_to_list(adj, e);
+        }
     }
 
     while (visited_count != city_count) {
@@ -97,12 +99,13 @@ void graph::prims_algo(int start) {
             mst[visited_count - 1] = m;
             cost += m.wt;
             for (int i = 0; i < city_count; i++) {
-                edge e;
-                e.start = m.end;
-                e.end = i;
-                e.wt = adj_mat[e.start][i];
-                // did i need to check visited here -- for future ref
-                add_to_list(adj, e);
+                if (adj_mat[start][i] != INT32_MAX) {
+                    edge e;
+                    e.start = m.end;
+                    e.end = i;
+                    e.wt = adj_mat[e.start][i];
+                    add_to_list(adj, e);
+                }
             }
             visited[m.end] = 1;
             visited_count++;
