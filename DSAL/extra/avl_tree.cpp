@@ -1,99 +1,131 @@
 #include <iostream>
 using namespace std;
-#define MAX 10
-int find(int, int);
-void print(int, int);
-int p[MAX], q[MAX], w[10][10], c[10][10], r[10][10], i, j, k, n, m;
-char idnt[7][10];
 
-int main()
+// creating node struct
+struct node {
+    int key;
+    struct node* left;
+    struct node* right;
+    int height;
+};
 
-{
-    cout << "enter a number of identifiers : ";
-    cin >> n;
-    cout << "enter identifiers : ";
-    for (i = 1; i <= n; i++) cin >> idnt[i];
-    cout << "enter success probability for identifiers : ";
-    for (i = 1; i <= n; i++) cin >> p[i];
-    cout << "enter failure probability  for identifiers : ";
-    for (i = 0; i <= n; i++) cin >> q[i];
-    cout << "\n Weight        Cost          Root \n";
+struct node* createNode(int key) {
+    // allocate memory
+    struct node* newNode = new node;
+    newNode->key = key;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    newNode->height = 1;
+    return newNode;
+}
 
-    for (i = 0; i <= n; i++) {
-        w[i][i] = q[i];
-        c[i][i] = r[i][i] = 0;
-        cout << "\n"
-             << w[i][i] << "          " << c[i][i] << "             "
-             << r[i][i];
-        cout << "\n------------------------------------------------------------"
-                "-------------";
+// max function to get max of 2 numbers
+int max(int a, int b) { return (a > b) ? a : b; }
+
+// height function to get height of the node
+int height(struct node* n) { return (n == NULL) ? 0 : n->height; }
+
+// get balance factor of the node 0 if null else h_left-h_right
+int balance_factor(struct node* n) {
+    return (n == NULL) ? 0 : (height(n->left) - height(n->right));
+}
+
+struct node* leftRotate(struct node* x) {
+    // getting the changing childs
+    struct node* y = x->right;
+    struct node* t2 = y->left;
+
+    // changing the childs
+    y->left = x;
+    x->right = t2;
+
+    // changing heights
+    x->height = 1 + max(height(x->left), height(x->right));
+    y->height = 1 + max(height(y->left), height(y->right));
+
+    // y will be new head of the tree/subtree
+    return y;
+}
+
+struct node* rightRotate(struct node* y) {
+    // getting the changing childs
+    struct node* x = y->left;
+    struct node* t2 = x->right;
+
+    // changing the childs
+    x->right = y;
+    y->left = t2;
+
+    // changing heights
+    x->height = 1 + max(height(x->left), height(x->right));
+    y->height = 1 + max(height(y->left), height(y->right));
+
+    // x will be new head of the tree/subtree
+    return x;
+}
+
+struct node* insert(struct node* root, int key) {
+    // if root is empty returning new node
+    if (root == NULL) {
+        return createNode(key);
     }
-    cout << "\n----------------------------------------------------------------"
-            "---------";
-    for (i = 0; i < n; i++) {
-        j = i + 1;
-        w[i][j] = p[j] + q[j] + w[i][i];  // w(i,j)= p[j]+q[i]+w(i,j-1)
-        c[i][j] =
-            w[i][j] + c[j][j];  // c(i,j)= min { c (i,k-1)+c(k+1, j) }+ w(i,j))
-        r[i][j] = j;
-        cout << "\n"
-             << w[i][j] << "           " << c[i][j] << "              "
-             << r[i][j];
-        cout << "\n------------------------------------------------------------"
-                "-------------";
+    if (key < root->key) {
+        // insert new node at left of root
+        root->left = insert(root->left, key);
     }
-    cout << "\n----------------------------------------------------------------"
-            "---------";
-    for (m = 2; m <= n; m++) {
-        for (i = 0; i <= n - m; i++) {
-            j = i + m;
-            w[i][j] = w[i][j - 1] + p[j] + q[j];
-            k = find(i, j);
-            r[i][j] = k;
-            c[i][j] = w[i][j] + c[i][k - 1] + c[k][j];
-            cout << "\n"
-                 << w[i][j] << "            " << c[i][j] << "           "
-                 << r[i][j] << endl;
-        }
+    if (key > root->key) {
+        // insert new node at right of root
+        root->right = insert(root->right, key);
     }
-    cout << "------------------------------------------------------------------"
-            "-------";
-    cout << "\n THE FINAL OBST IS : \n ";
-    print(0, n);
+
+    // increasing height of node after insertion so that because of recursion
+    // the height will be updated upto root from the node inserted at the leaf
+    // position
+    root->height = 1 + max(height(root->left), height(root->right));
+    int bf = balance_factor(root);
+
+    // LL rotation
+    if (bf > 1 && key < root->left->key) {
+        root = rightRotate(root);
+    }
+
+    // RR rotation
+    if (bf < -1 && key > root->right->key) {
+        root = leftRotate(root);
+    }
+
+    // LR rotation
+    if (bf > 1 && key > root->left->key) {
+        root->left = leftRotate(root->left);
+        root = rightRotate(root);
+    }
+
+    // RL rotation
+    if (bf < -1 && key < root->right->key) {
+        root->right = rightRotate(root->right);
+        root = leftRotate(root);
+    }
+    return root;
+}
+
+void preorder(struct node* n) {
+    if (n != NULL) {
+        cout << n->key << " ";
+        preorder(n->left);
+        preorder(n->right);
+    }
+}
+
+int main() {
+    struct node* root = NULL;
+    root = insert(root, 1);
+    root = insert(root, 2);
+    root = insert(root, 4);
+    root = insert(root, 5);
+    root = insert(root, 6);
+    root = insert(root, 3);
+
+    preorder(root);
+
     return 0;
 }
-int find(int i, int j) {
-    int min = 2000, m, l;  // c[i][j];
-    for (m = i + 1; m <= j; m++)
-        if (c[i][m - 1] + c[m][j] < min) {
-            min = c[i][m - 1] + c[m][j];
-            l = m;
-        }
-    return l;
-}
-void print(int i, int j) {
-    if (i < j)
-        cout << "\n" << idnt[r[i][j]];
-    else
-        return;
-    print(i, r[i][j] - 1);
-    print(r[i][j], j);
-}
-
-/*
-4
-do
-if
-read
-write
-1
-3
-1
-3
-1
-2
-1
-1
-3
-
-*/
