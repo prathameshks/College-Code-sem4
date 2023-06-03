@@ -1,251 +1,279 @@
-    /*
-    * C++ Program to Construct an Expression Tree for a Given Prefix Expression
-    */
-    #include <iostream>
-    #include <cstdlib>
-    #include <cstdio>     
-    #include <cstring> 
-    using namespace std;
-    
-    /** class TreeNode **/
-    class TreeNode
-    {       
-        public:
-            char data;
-            TreeNode *left, *right;
-            /** constructor **/
-            TreeNode(char data)
-            {
-                this->data = data;
-                this->left = NULL;
-                this->right = NULL;
-            }
-    }; 
-    
-    /** class StackNode **/
-    class StackNode
-    {    
-        public:
-            TreeNode *treeNode;
-            StackNode *next;
-            /** constructor **/ 
-            StackNode(TreeNode *treeNode)
-            {
-                this->treeNode = treeNode;
-                next = NULL;
-            }
-    };
-    
-    
-    class ExpressionTree
-    {
-        private:
-            StackNode *top;
-        public:
-            /** constructor **/ 
-            ExpressionTree()
-            {
-                top = NULL;
-            }
-    
-            /** function to clear tree **/
-            void clear()
-            {
-                top = NULL;
-            }
-    
-            /** function to push a node **/
-            void push(TreeNode *ptr)
-            {
-                if (top == NULL)
-                    top = new StackNode(ptr);
-                else
-                {
-                    StackNode *nptr = new StackNode(ptr);
-                    nptr->next = top;
-                    top = nptr;
-                }
-            }
-    
-            /** function to pop a node **/
-            TreeNode *pop()
-            {
-                if (top == NULL)
-                {
-                    cout<<"Underflow"<<endl;
-                }
-                else
-                {
-                    TreeNode *ptr = top->treeNode;
-                    top = top->next;
-                    return ptr;
-                }
-            }
-    
-            /** function to get top node **/
-            TreeNode *peek()
-            {
-                return top->treeNode;
-            }
-    
-    
-            /** function to insert character **/
-            void insert(char val)
-            {
-                if (isDigit(val))
-                {
-                    TreeNode *nptr = new TreeNode(val);
-                    push(nptr);
-                }
-                else if (isOperator(val))
-                {
-                    TreeNode *nptr = new TreeNode(val);
-                    nptr->left = pop();
-                    nptr->right = pop();
-                    push(nptr);
-                }
-                else
-                {
-                    cout<<"Invalid Expression"<<endl;
-                    return;
-                }
-            }
-    
-            /** function to check if digit **/
-            bool isDigit(char ch)
-            {
-                return ch >= '0' && ch <= '9';
-            }
-    
-            /** function to check if operator **/
-            bool isOperator(char ch)
-            {
-                return ch == '+' || ch == '-' || ch == '*' || ch == '/';
-            }
-    
-    
-            /** function to convert character to digit **/
-            int toDigit(char ch)
-            {
-                return ch - '0';
-            }
-    
-            /** function to build tree from input */
-    
-            void buildTree(string eqn)
-            {
-                for (int i = eqn.length() - 1; i >= 0; i--)
-                    insert(eqn[i]);
-            }
-    
-            /** function to evaluate tree */
-            double evaluate()
-            {
-                return evaluate(peek());
-            }
-    
-            /** function to evaluate tree */
-            double evaluate(TreeNode *ptr)
-            {
-                if (ptr->left == NULL && ptr->right == NULL)
-                    return toDigit(ptr->data);
-                else
-                {
-                    double result = 0.0;
-                    double left = evaluate(ptr->left);
-                    double right = evaluate(ptr->right);
-                    char op = ptr->data;
-                    switch (op)
-                    {
-                    case '+': 
-                        result = left + right; 
-                        break;
-                    case '-': 
-                        result = left - right; 
-                        break;
-                    case '*': 
-                        result = left * right; 
-                        break;
-                    case '/': 
-                        result = left / right; 
-                        break;
-                    default: 
-                        result = left + right; 
-                        break;
-                    }
-                    return result;
-                }
-            }
-    
-            /** function to get postfix expression */
-            void postfix()
-            {
-                postOrder(peek());
-            }
-    
-            /** post order traversal */
-            void postOrder(TreeNode *ptr)
-            {
-                if (ptr != NULL)
-                {
-                    postOrder(ptr->left);            
-                    postOrder(ptr->right);
-                    cout<<ptr->data;            
-                }    
-            }
-    
-            /** function to get infix expression */
-            void infix()
-            {
-                inOrder(peek());
-            }
-    
-            /** in order traversal */
-            void inOrder(TreeNode *ptr)
-            {
-                if (ptr != NULL)
-                {
-                    inOrder(ptr->left);
-                    cout<<ptr->data;   
-                    inOrder(ptr->right);            
-                }    
-            }
-    
-            /** function to get prefix expression */
-            void prefix()
-            {
-                preOrder(peek());
-            }
-    
-            /** pre order traversal */
-            void preOrder(TreeNode *ptr)
-            {
-                if (ptr != NULL)
-                {
-                    cout<<ptr->data;
-                    preOrder(ptr->left);
-                    preOrder(ptr->right);            
-                }    
-            }
-    };
-    
-    
-    
-    /** Main Contains menu **/
-    int main()
-    {
-        string s;
-        cout<<"Expression Tree Test"<<endl;
-        ExpressionTree et;
-        cout<<"\nEnter equation in Prefix form: ";
-        cin>>s;
-        et.buildTree(s);
-        cout<<"\nPrefix  : ";
-        et.prefix();
-        cout<<"\n\nInfix   : ";
-        et.infix();
-        cout<<"\n\nPostfix : ";
-        et.postfix();
-        cout<<"\n\nEvaluated Result : "<<et.evaluate();
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct node {
+    string key;
+    string meaning;
+    node* left = NULL;
+    node* right = NULL;
+};
+class dictionary {
+   public:
+    node* root = NULL;
+    node* insert(node* root, node* temp);
+    void asc_display(node* root);
+    void dec_display(node* root);
+    // node* balance(node *temp);
+    node* right_rotate(node* root);
+    node* left_rotate(node* root);
+    int balance_factor(node* root);
+    int height(node* root);
+    node* find(node* r, string k);
+    node* delete_key(node* r, string k);
+};
+
+node* dictionary ::insert(struct node* root, node* key) {
+    // if root is empty returning new node
+    if (root == NULL) {
+        return key;
+    }
+    if (key->key < root->key) {
+        // insert new node at left of root
+        root->left = insert(root->left, key);
+    }
+    if (key->key > root->key) {
+        // insert new node at right of root
+        root->right = insert(root->right, key);
+    }
+
+    // increasing height of node after insertion so that because of recursion
+    // the height will be updated upto root from the node inserted at the leaf
+    // position
+    // root->height = 1 + max(height(root->left), height(root->right));
+    int bf = balance_factor(root);
+
+    // LL rotation
+    if (bf > 1 && key->key < root->left->key) {
+        root = right_rotate(root);
+    }
+
+    // RR rotation
+    if (bf < -1 && key->key > root->right->key) {
+        root = left_rotate(root);
+    }
+
+    // LR rotation
+    if (bf > 1 && key->key > root->left->key) {
+        root->left = left_rotate(root->left);
+        root = right_rotate(root);
+    }
+
+    // RL rotation
+    if (bf < -1 && key->key < root->right->key) {
+        root->right = right_rotate(root->right);
+        root = left_rotate(root);
+    }
+    return root;
+}
+
+node* dictionary::right_rotate(node* par) {
+    // node *temp,*temp1;
+    // temp=par->left;
+    // temp1=temp->right;
+    // temp->right=par;
+    // par->left= temp->right;
+    // return temp;
+
+    // node *new_root=par->left;
+    // par->left=new_root->right;
+    // new_root->right=par;
+    // return new_root;
+
+    // getting the changing childs
+    struct node* x = par->left;
+    struct node* t2 = x->right;
+
+    // changing the childs
+    x->right = par;
+    par->left = t2;
+    return x;
+}
+
+node* dictionary::left_rotate(node* par) {
+    // node *temp,*temp1;
+    // temp=par->right;
+    // temp1=temp->left;
+    // temp->left=par;
+    // par->right=temp1;
+    // return temp;
+
+    // node *new_root=par->right;
+    // par->right=new_root->left;
+    // new_root->left=par;
+    // return new_root;
+
+    // getting the changing childs
+    struct node* y = par->right;
+    struct node* t2 = y->left;
+
+    // changing the childs
+    y->left = par;
+    par->right = t2;
+    return y;
+}
+
+int dictionary::balance_factor(node* root) {
+    return root == NULL ? 0 : (height(root->left) - height(root->right));
+}
+
+int dictionary::height(node* root) {
+    if (!root) {
         return 0;
     }
+    return max(height(root->left), height(root->right)) + 1;
+}
+
+node* dictionary::delete_key(node* r, string k) {
+    if (r == NULL) return NULL;
+    if (r->key == k) {
+        if (!r->left && !r->right) {
+            delete (r);
+            return NULL;
+        }
+        if (r->left && !r->right) {
+            node* temp = r->left;
+            delete (r);
+            return temp;
+        }
+        if (!r->left && r->right) {
+            node* temp = r->right;
+            delete (r);
+            return temp;
+        }
+        if (r->left && r->right) {
+            node* rep = r->left;
+            while (rep->right != NULL) rep = rep->right;
+            r->key = rep->key;
+            r->meaning = rep->meaning;
+            r->right = delete_key(r->right, rep->key);
+            // return balance(r);
+        }
+    }
+    if (r->key > k) {
+        r->left = delete_key(r->left, k);
+    } else {
+        r->right = delete_key(r->right, k);
+    }
+    // return balance(r);
+    return r;
+}
+
+node* dictionary::find(node* r, string k) {
+    while (r != NULL) {
+        if (r->key == k) {
+            return r;
+        }
+        if (r->key > k) {
+            r = r->left;
+        } else {
+            r = r->right;
+        }
+    }
+    return NULL;
+}
+
+void dictionary::asc_display(node* root) {
+    if (root != NULL) {
+        asc_display(root->left);
+        cout << root->key << " - " << root->meaning << endl;
+        asc_display(root->right);
+    }
+}
+void dictionary::dec_display(node* root) {
+    if (root != NULL) {
+        dec_display(root->right);
+        cout << root->key << " - " << root->meaning << endl;
+        dec_display(root->left);
+    }
+}
+
+int main() {
+    dictionary obj;
+    bool flag = true;
+    int ch;
+    string s, k;
+    node* t;
+    while (flag) {
+        cout << "MENU" << endl;
+        cout << "1.Insert" << endl;
+        cout << "2.Ascending Display" << endl;
+        cout << "4.Decending Display" << endl;
+        cout << "5.Update" << endl;
+        cout << "6.Delete" << endl;
+        cout << "7.Exit" << endl;
+        cout << "Enter choice:";
+        cin >> ch;
+        switch (ch) {
+            case 1:
+                t = new node();
+                cout << "Enter key:";
+                cin >> t->key;
+                cout << "Enter meaning:";
+                cin >> t->meaning;
+                if (obj.root == NULL) {
+                    obj.root = t;
+                } else {
+                    obj.insert(obj.root, t);
+                }
+
+                break;
+
+            case 2:
+                obj.asc_display(obj.root);
+                cout << endl;
+                break;
+
+            case 3:
+                obj.dec_display(obj.root);
+                cout << endl;
+                break;
+                ;
+
+            case 5:
+                cout << "Enter key you want to update:";
+                cin >> s;
+                cout << "Enter new meaning:";
+                cin >> k;
+                obj.find(obj.root, s)->meaning = k;
+                break;
+
+            case 6:
+                cout << "Enter key to be deleted:";
+                cin >> s;
+                obj.delete_key(obj.root, s);
+                break;
+
+            case 7:
+                flag = false;
+                break;
+
+            default:
+                cout << "Invalid input" << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
+
+/*
+1
+50
+kaustubh
+1
+30
+prathamesh
+1
+20
+siddharth
+1
+40
+ayush
+1
+10
+akhilesh
+2
+3
+
+*/
