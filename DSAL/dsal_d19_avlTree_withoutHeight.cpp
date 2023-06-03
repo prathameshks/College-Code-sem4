@@ -79,20 +79,20 @@ class AVL {
         }
         int bf = balanceFactor(temp);
         // LL Rotation
-        if (bf > 1 && key < temp->left->key) {
+        if (bf > 1 && balanceFactor(root->left) >= 0) {
             return rightRotate(temp);
         }
         // RR Rotation
-        if (bf < -1 && key > temp->right->key) {
+        if (bf < -1 && balanceFactor(root->right) <= 0) {
             return leftRotate(temp);
         }
         // LR Rotation
-        if (bf > 1 && key > temp->left->key) {
+        if (bf > 1 && balanceFactor(root->left) < 0) {
             temp->left = leftRotate(temp->left);
             return rightRotate(temp);
         }
         // RL Rotation
-        if (bf < -1 && key < temp->right->key) {
+        if (bf < -1 && balanceFactor(root->right) > 0) {
             temp->right = rightRotate(temp->right);
             return leftRotate(temp);
         }

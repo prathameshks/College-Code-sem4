@@ -89,20 +89,24 @@ class AVL {
         temp->height = 1 + max(height(temp->left), height(temp->right));
         int bf = balanceFactor(temp);
         // LL Rotation
-        if (bf > 1 && key < temp->left->key) {
+        // if (bf > 1 && key < temp->left->key) {
+        if (bf > 1 && balanceFactor(root->left) >= 0) {
             return rightRotate(temp);
         }
         // RR Rotation
-        if (bf < -1 && key > temp->right->key) {
+        // if (bf < -1 && key > temp->right->key) {
+        if (bf < -1 && balanceFactor(root->right) <= 0) {
             return leftRotate(temp);
         }
         // LR Rotation
-        if (bf > 1 && key > temp->left->key) {
+        // if (bf > 1 && key > temp->left->key) {
+        if (bf > 1 && balanceFactor(root->left) < 0) {
             temp->left = leftRotate(temp->left);
             return rightRotate(temp);
         }
         // RL Rotation
-        if (bf < -1 && key < temp->right->key) {
+        // if (bf < -1 && key < temp->right->key) {
+        if (bf < -1 && balanceFactor(root->right) > 0) {
             temp->right = rightRotate(temp->right);
             return leftRotate(temp);
         }
@@ -279,13 +283,79 @@ class AVL {
 
 int main() {
     // implement AVL tree
-    AVL a;
-    cout << a.insert("1", "a") << endl;
-    cout << a.insert("2", "b") << endl;
-    cout << a.insert("3", "c") << endl;
-    cout << a.insert("4", "d") << endl;
-    a.descending();
-    cout << a.remove("1") << endl;
-    a.ascending();
+    AVL tree;
+    int ch;
+    string k, v, ans;
+    do {
+        cout << endl;
+        cout << "--: MENU :--" << endl;
+        cout << "1. Insert" << endl;
+        cout << "2. Search" << endl;
+        cout << "3. Update" << endl;
+        cout << "4. Delete" << endl;
+        cout << "5. Display Descending" << endl;
+        cout << "6. Display Ascending" << endl;
+        cout << "0. Exit" << endl;
+        cout << "ENTER YOUR CHOICE:";
+        cin >> ch;
+        switch (ch) {
+            case 1:
+                cout << "Enter key to insert:";
+                cin >> k;
+                cout << "Enter value:";
+                cin >> v;
+                if (tree.insert(k, v)) {
+                    cout << "Element Inserted Successfully" << endl;
+                } else {
+                    cout << "Element Already Present" << endl;
+                }
+                break;
+            case 2:
+                cout << "Enter key to search:";
+                cin >> k;
+                ans = tree.search(k);
+                if (ans == "\0") {
+                    cout << "Element Not Found" << endl;
+                } else {
+                    cout << "Value is " << ans << endl;
+                }
+                break;
+            case 3:
+                cout << "Enter key to Update:";
+                cin >> k;
+                cout << "Enter new value:";
+                cin >> v;
+                if (tree.update(k, v)) {
+                    cout << "Element Updated Successfully" << endl;
+                } else {
+                    cout << "Element Not Present" << endl;
+                }
+                break;
+            case 4:
+                cout << "Enter key to Delete:";
+                cin >> k;
+                if (tree.remove(k)) {
+                    cout << "Element Deleted Successfully" << endl;
+                } else {
+                    cout << "Element Not Present" << endl;
+                }
+                break;
+            case 5:
+                cout << "Data in Descending order is " << endl;
+                tree.descending();
+                break;
+            case 6:
+                cout << "Data in Ascending order is " << endl;
+                tree.ascending();
+                break;
+            case 0:
+                cout << "Thank You!" << endl;
+                break;
+            default:
+                cout << "Please Enter a valid choice" << endl;
+                break;
+        }
+    } while (ch != 0);
+
     return 0;
 }
