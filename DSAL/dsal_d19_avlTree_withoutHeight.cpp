@@ -42,9 +42,6 @@ class AVL {
     node* rightRotate(node* y) {
         // get changing nodes
         node* x = y->left;
-        if (x == NULL) {
-            cout << "Found x NULL " << y->key << endl;
-        }
 
         node* t2 = x->right;
 
