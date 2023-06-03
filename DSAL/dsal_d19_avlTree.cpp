@@ -141,45 +141,6 @@ class AVL {
         }
         return false;
     }
-
-   public:
-    string search(string key) {
-        node* temp = root;
-        while (temp != NULL) {
-            if (temp->key == key) {
-                return temp->value;
-            } else if (temp->key < key) {
-                temp = temp->right;
-            } else {
-                temp = temp->left;
-            }
-        }
-        return "\0";
-    }
-
-    bool insert(string key, string value) {
-        if (isPresent(key)) {
-            return false;
-        } else {
-            root = insertion(root, key, value);
-            return true;
-        }
-    }
-
-    bool update(string key, string value) {
-        node* temp = root;
-        while (temp != NULL) {
-            if (temp->key == key) {
-                temp->value = value;
-                return true;
-            } else if (temp->key < key) {
-                temp = temp->right;
-            } else {
-                temp = temp->left;
-            }
-        }
-        return false;
-    }
     node* minNode(node* root) {
         node* n = root;
         while (n->left != NULL) {
@@ -250,6 +211,45 @@ class AVL {
             return leftRotate(temp_root);
         }
         return temp_root;
+    }
+
+   public:
+    string search(string key) {
+        node* temp = root;
+        while (temp != NULL) {
+            if (temp->key == key) {
+                return temp->value;
+            } else if (temp->key < key) {
+                temp = temp->right;
+            } else {
+                temp = temp->left;
+            }
+        }
+        return "\0";
+    }
+
+    bool insert(string key, string value) {
+        if (isPresent(key)) {
+            return false;
+        } else {
+            root = insertion(root, key, value);
+            return true;
+        }
+    }
+
+    bool update(string key, string value) {
+        node* temp = root;
+        while (temp != NULL) {
+            if (temp->key == key) {
+                temp->value = value;
+                return true;
+            } else if (temp->key < key) {
+                temp = temp->right;
+            } else {
+                temp = temp->left;
+            }
+        }
+        return false;
     }
 
     bool remove(string key) {
