@@ -1,279 +1,122 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#define max_no_cities 10
 using namespace std;
 
-struct node {
-    string key;
-    string meaning;
-    node* left = NULL;
-    node* right = NULL;
+struct edge {
+    int start;
+    int end;
+    int wt;
 };
-class dictionary {
+
+class graph {
+    int adj_mat[max_no_cities][max_no_cities] = {0};
+    int city_cnt;
+    string city_name[max_no_cities];
+    int cost;
+    edge mst[max_no_cities - 1];
+    void add_to_list(vector<edge> &, edge);
+
    public:
-    node* root = NULL;
-    node* insert(node* root, node* temp);
-    void asc_display(node* root);
-    void dec_display(node* root);
-    // node* balance(node *temp);
-    node* right_rotate(node* root);
-    node* left_rotate(node* root);
-    int balance_factor(node* root);
-    int height(node* root);
-    node* find(node* r, string k);
-    node* delete_key(node* r, string k);
+    graph();
+    void prims_algo(int);
+    void display_mst();
 };
 
-node* dictionary ::insert(struct node* root, node* key) {
-    // if root is empty returning new node
-    if (root == NULL) {
-        return key;
-    }
-    if (key->key < root->key) {
-        // insert new node at left of root
-        root->left = insert(root->left, key);
-    }
-    if (key->key > root->key) {
-        // insert new node at right of root
-        root->right = insert(root->right, key);
-    }
-
-    // increasing height of node after insertion so that because of recursion
-    // the height will be updated upto root from the node inserted at the leaf
-    // position
-    // root->height = 1 + max(height(root->left), height(root->right));
-    int bf = balance_factor(root);
-
-    // LL rotation
-    if (bf > 1 && key->key < root->left->key) {
-        root = right_rotate(root);
-    }
-
-    // RR rotation
-    if (bf < -1 && key->key > root->right->key) {
-        root = left_rotate(root);
-    }
-
-    // LR rotation
-    if (bf > 1 && key->key > root->left->key) {
-        root->left = left_rotate(root->left);
-        root = right_rotate(root);
-    }
-
-    // RL rotation
-    if (bf < -1 && key->key < root->right->key) {
-        root->right = right_rotate(root->right);
-        root = left_rotate(root);
-    }
-    return root;
-}
-
-node* dictionary::right_rotate(node* par) {
-    // node *temp,*temp1;
-    // temp=par->left;
-    // temp1=temp->right;
-    // temp->right=par;
-    // par->left= temp->right;
-    // return temp;
-
-    // node *new_root=par->left;
-    // par->left=new_root->right;
-    // new_root->right=par;
-    // return new_root;
-
-    // getting the changing childs
-    struct node* x = par->left;
-    struct node* t2 = x->right;
-
-    // changing the childs
-    x->right = par;
-    par->left = t2;
-    return x;
-}
-
-node* dictionary::left_rotate(node* par) {
-    // node *temp,*temp1;
-    // temp=par->right;
-    // temp1=temp->left;
-    // temp->left=par;
-    // par->right=temp1;
-    // return temp;
-
-    // node *new_root=par->right;
-    // par->right=new_root->left;
-    // new_root->left=par;
-    // return new_root;
-
-    // getting the changing childs
-    struct node* y = par->right;
-    struct node* t2 = y->left;
-
-    // changing the childs
-    y->left = par;
-    par->right = t2;
-    return y;
-}
-
-int dictionary::balance_factor(node* root) {
-    return root == NULL ? 0 : (height(root->left) - height(root->right));
-}
-
-int dictionary::height(node* root) {
-    if (!root) {
-        return 0;
-    }
-    return max(height(root->left), height(root->right)) + 1;
-}
-
-node* dictionary::delete_key(node* r, string k) {
-    if (r == NULL) return NULL;
-    if (r->key == k) {
-        if (!r->left && !r->right) {
-            delete (r);
-            return NULL;
-        }
-        if (r->left && !r->right) {
-            node* temp = r->left;
-            delete (r);
-            return temp;
-        }
-        if (!r->left && r->right) {
-            node* temp = r->right;
-            delete (r);
-            return temp;
-        }
-        if (r->left && r->right) {
-            node* rep = r->left;
-            while (rep->right != NULL) rep = rep->right;
-            r->key = rep->key;
-            r->meaning = rep->meaning;
-            r->right = delete_key(r->right, rep->key);
-            // return balance(r);
-        }
-    }
-    if (r->key > k) {
-        r->left = delete_key(r->left, k);
-    } else {
-        r->right = delete_key(r->right, k);
-    }
-    // return balance(r);
-    return r;
-}
-
-node* dictionary::find(node* r, string k) {
-    while (r != NULL) {
-        if (r->key == k) {
-            return r;
-        }
-        if (r->key > k) {
-            r = r->left;
+void graph::add_to_list(vector<edge> &list, edge e) {
+    list.push_back(e);
+    for (int i = list.size() - 1; i > 0; i--) {
+        if (list[i].wt < list[i - 1].wt) {
+            swap(list[i], list[i - 1]);
         } else {
-            r = r->right;
+            break;
         }
     }
-    return NULL;
 }
 
-void dictionary::asc_display(node* root) {
-    if (root != NULL) {
-        asc_display(root->left);
-        cout << root->key << " - " << root->meaning << endl;
-        asc_display(root->right);
+graph::graph() {
+    cost = 0;
+    cout << "Enter the number of cities : ";
+    cin >> city_cnt;
+    city_cnt = (city_cnt > max_no_cities) ? max_no_cities : city_cnt;
+    for (int i = 0; i < city_cnt; i++) {
+        cout << "Enter the city " << i + 1 << ":";
+        cin >> city_name[i];
+    }
+    for (int i = 0; i < city_cnt; i++)
+        for (int j = 0; j < city_cnt; j++) adj_mat[i][j] = INT32_MAX;
+
+    int num_pairs;
+    cout << "Enter the no. city of pairs : ";
+    cin >> num_pairs;
+    cout << "City codes are : " << endl;
+    for (int i = 0; i < city_cnt; i++) {
+        cout << i << "-" << city_name[i] << endl;
+    }
+    int x, y, wt;
+    for (int i = 0; i < num_pairs; i++) {
+        cout << "ENter the city " << i + 1 << ":";
+        cin >> x >> y;
+        cout << "enter the cost between " << city_name[x] << " and "
+             << city_name[y] << ":";
+        cin >> wt;
+        adj_mat[x][y] = wt;
+        adj_mat[y][x] = wt;
     }
 }
-void dictionary::dec_display(node* root) {
-    if (root != NULL) {
-        dec_display(root->right);
-        cout << root->key << " - " << root->meaning << endl;
-        dec_display(root->left);
+
+void graph::prims_algo(int start) {
+    bool visited[max_no_cities] = {0};
+    int visited_cnt = 1;
+    visited[start] = 1;
+    vector<edge> adj;
+    for (int i = 0; i < city_cnt; i++) {
+        if (adj_mat[start][i] != INT32_MAX) {
+            edge e;
+            e.start = start;
+            e.end = i;
+            e.wt = adj_mat[start][i];
+            add_to_list(adj, e);
+        }
     }
+
+    while (visited_cnt != city_cnt) {
+        edge m = adj.front();
+        adj.erase(adj.begin());
+        if (!visited[m.end]) {
+            mst[visited_cnt - 1] = m;
+            cost += m.wt;
+            for (int i = 0; i < city_cnt; i++) {
+                if (adj_mat[start][i] != INT32_MAX) {
+                    edge e;
+                    e.start = m.end;
+                    e.end = i;
+                    e.wt = adj_mat[e.start][i];
+                    add_to_list(adj, e);
+                }
+            }
+            visited[m.end] = 1;
+            visited_cnt++;
+        }
+    }
+}
+
+void graph::display_mst() {
+    cout << "The most efficient network is : " << endl;
+    for (int i = 0; i < city_cnt - 1; i++) {
+        cout << city_name[mst[i].start] << "to" << city_name[mst[i].end]
+             << " of weight " << mst[i].wt << endl;
+    }
+    cout << endl << "the cost of the network is  : " << cost << endl;
 }
 
 int main() {
-    dictionary obj;
-    bool flag = true;
-    int ch;
-    string s, k;
-    node* t;
-    while (flag) {
-        cout << "MENU" << endl;
-        cout << "1.Insert" << endl;
-        cout << "2.Ascending Display" << endl;
-        cout << "4.Decending Display" << endl;
-        cout << "5.Update" << endl;
-        cout << "6.Delete" << endl;
-        cout << "7.Exit" << endl;
-        cout << "Enter choice:";
-        cin >> ch;
-        switch (ch) {
-            case 1:
-                t = new node();
-                cout << "Enter key:";
-                cin >> t->key;
-                cout << "Enter meaning:";
-                cin >> t->meaning;
-                if (obj.root == NULL) {
-                    obj.root = t;
-                } else {
-                    obj.insert(obj.root, t);
-                }
-
-                break;
-
-            case 2:
-                obj.asc_display(obj.root);
-                cout << endl;
-                break;
-
-            case 3:
-                obj.dec_display(obj.root);
-                cout << endl;
-                break;
-                ;
-
-            case 5:
-                cout << "Enter key you want to update:";
-                cin >> s;
-                cout << "Enter new meaning:";
-                cin >> k;
-                obj.find(obj.root, s)->meaning = k;
-                break;
-
-            case 6:
-                cout << "Enter key to be deleted:";
-                cin >> s;
-                obj.delete_key(obj.root, s);
-                break;
-
-            case 7:
-                flag = false;
-                break;
-
-            default:
-                cout << "Invalid input" << endl;
-                break;
-        }
-    }
-
+    graph g;
+    int start;
+    cout << "Enter the start city : ";
+    cin >> start;
+    start = (start > max_no_cities - 1) ? 0 : start;
+    g.prims_algo(start);
+    g.display_mst();
     return 0;
 }
-
-/*
-1
-50
-kaustubh
-1
-30
-prathamesh
-1
-20
-siddharth
-1
-40
-ayush
-1
-10
-akhilesh
-2
-3
-
-*/

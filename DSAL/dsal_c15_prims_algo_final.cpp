@@ -99,7 +99,7 @@ void graph::prims_algo(int start) {
             mst[visited_count - 1] = m;
             cost += m.wt;
             for (int i = 0; i < city_count; i++) {
-                if (adj_mat[start][i] != INT32_MAX) {
+                if (adj_mat[m.end][i] != INT32_MAX) {
                     edge e;
                     e.start = m.end;
                     e.end = i;
@@ -171,4 +171,18 @@ d
 4 6 24
 4 5 25
 0
+*/
+
+/*
+4
+a
+b
+c
+d
+4
+0 1 2
+1 2 3
+2 3 1
+3 0 3
+
 */
