@@ -16,7 +16,8 @@ section .data
     m3 db "Elements of Array are ",10
     m3l equ $-m3
 
-    arr db 11h,59h,33h,66h,44h
+    arr db 11h,59h,33h,96h,44h
+    ;here 80h is 1001 0110 so it is considered as -ve number
 
     new_line db 10
     space db " "
