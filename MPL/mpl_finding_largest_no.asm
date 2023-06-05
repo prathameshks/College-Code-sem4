@@ -48,7 +48,7 @@ section .text
 	 	pop rsi
 	 	inc rsi
 		dec byte[cunt]
-	 	jnz next
+	 	jnz next 
 		
 	
 	print newline,1
