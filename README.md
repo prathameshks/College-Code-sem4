@@ -13,7 +13,7 @@ To use the code in this repository, navigate to the appropriate directory for th
 
 - [DSAL](DSAL): Contains code for the DSA lab in Python and C++. Learn about data structures and algorithms!
 - [MPL](MPL): Contains code for the Micro Processor lab in 64-bit assembly language. Dive into low-level programming!
-- [Solving-M3-With-Python](solving-M3-with-python): Contains programs designed to solve and verify numericals for the SPPU Computer Engineering SE M3 course.
+- [Solving-M3-With-Python](https://github.com/prathameshks/solving-M3-with-python.git): Contains programs designed to solve and verify numericals for the SPPU Computer Engineering SE M3 course.
 
 ## Contributing 🤝
 Contributions to this repository are welcome. If you have any suggestions or improvements, feel free to open an issue or submit a pull request.
