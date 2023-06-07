@@ -133,7 +133,7 @@ class OBST {
 
     void generate_obst() {
         root = get_node(0, n);
-        cout<<"PreOrder Traversal Is"<<endl;
+        cout << "PreOrder Traversal Is" << endl;
         pre_order(root);
         cout << endl;
     }
