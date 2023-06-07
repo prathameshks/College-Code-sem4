@@ -63,7 +63,7 @@ class tree {
             cout << n->data;
         }
     }
-    
+
     void postOrder() {
         stack<node*> s2;
         s.push(root);
@@ -81,6 +81,15 @@ class tree {
         while (!s2.empty()) {
             cout << s2.top()->data;
             s2.pop();
+        }
+    }
+
+    void del(node* n){
+        if (n!=NULL)
+        {
+            del(n->left);
+            del(n->right);
+            delete n;
         }
     }
 };

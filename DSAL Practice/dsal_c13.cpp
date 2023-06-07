@@ -6,121 +6,104 @@ that.
 */
 
 #include <iostream>
+#include <queue>
+#include <stack>
+#include <vector>
 using namespace std;
+#define MAX 10
 
-class node {
-   public:
-    string key, value;
-    node *left, *right;
-    node(string k = "", string v = "") {
-        key = k;
-        value = v;
-        left = NULL;
-        right = NULL;
-    }
-};
-
-class bst {
+class graph {
    private:
-    node* root;
-
-    node* min_val(node* n) {
-        while (n->left != NULL) {
-            n = n->left;
-        }
-        return n;
-    }
-
-    node* remove(node* n, string key) {
-        if (n == NULL) {
-            return NULL;
-        }
-        node* temp;
-        if (key < n->key) {
-            n->left = remove(n->left, key);
-        } else if (key > n->key) {
-            n->right = remove(n->right, key);
-        } else {
-            if (n->left == NULL and n->right == NULL) {
-                return NULL;
-            } else if (n->left != NULL and n->right == NULL) {
-                temp = n->left;
-                delete n;
-                return temp;
-            } else if (n->left == NULL and n->right != NULL) {
-                temp = n->right;
-                delete n;
-                return temp;
-            } else {
-                temp = min_val(n->right);
-                n->key = temp->key;
-                n->value = temp->value;
-                n->right = remove(n->right, temp->key);
-            }
-        }
-        return n;
-    }
-
-    node* insert(node* n, string key, string val) {
-        if (n == NULL) {
-            node* t = new node(key, val);
-            return t;
-        }
-
-        if (key < n->key) {
-            n->left = insert(n->left, key, val);
-        } else if (key > n->key) {
-            n->right = insert(n->right, key, val);
-        }
-        return n;
-    }
+    int adj_mat[MAX][MAX] = {0};
+    vector<vector<int>> adj_list;
+    int n;
 
    public:
-    bst() { root = NULL; }
-
-    void insert(string key, string val) { root = insert(root, key, val); }
-
-    string search(string key) {
-        node* temp = root;
-        while (temp != NULL) {
-            if (key < temp->key) {
-                temp = temp->left;
-            } else if (key > temp->key) {
-                temp = temp->right;
-            } else {
-                return temp->value;
-            }
+    graph(int n) {
+        this->n = n;
+        adj_list.resize(n);
+    }
+    void insert(int edge_count) {
+        int i, j;
+        for (int k = 0; k < edge_count; k++) {
+            cout << "Enter vertex of edge :";
+            cin >> i >> j;
+            adj_mat[i][j] = 1;
+            adj_mat[j][i] = 1;
+            adj_list[i].push_back(j);
+            adj_list[j].push_back(i);
         }
-        return "\0";
+    }
+    void print_adj_list() {
+        for (int i = 0; i < n; i++) {
+            cout << i << "->";
+            for (int j = 0; j < adj_list[i].size(); j++) {
+                cout << adj_list[i][j] << "->";
+            }
+            cout << "NULL" << endl;
+        }
+    }
+    void print_adj_matrix() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << adj_mat[i][j] << " ";
+            }
+            cout << endl;
+        }
     }
 
-    bool update(string key, string val) {
-        node* temp = root;
-        while (temp != NULL) {
-            if (key < temp->key) {
-                temp = temp->left;
-            } else if (key > temp->key) {
-                temp = temp->right;
-            } else {
-                temp->value = val;
-                return true;
+    
+
+    void bfs() {
+        queue<int> s;
+        vector<int> visited(n, 0);
+        s.push(0);
+        while (!s.empty()) {
+            int i = s.front();
+            s.pop();
+            if (!visited[i]) {
+                cout << i << " ";
+                visited[i] = 1;
+                for (int j:adj_list[i]) {
+                    if (!visited[j] && j != i) {
+                        s.push(j);
+                    }
+                }
             }
         }
-        return false;
+        cout << endl;
     }
 
-    void remove(string key) { root = remove(root, key); }
+    void dfs() {
+        stack<int> s;
+        vector<int> visited(n, 0);
+        s.push(0);
+        while (!s.empty()) {
+            int i = s.top();
+            s.pop();
+            if (!visited[i]) {
+                cout << i << " ";
+                visited[i] = 1;
+                for (int j = 0; j < n; j++) {
+                    if (!visited[j] && j != i && adj_mat[i][j] == 1) {
+                        s.push(j);
+                    }
+                }
+            }
+        }
+        cout << endl;
+    }
 };
 
 int main() {
     // code here
-    bst t;
-    t.insert("g", "1");
-    t.insert("a", "2");
-    t.insert("b", "3");
-    t.insert("y", "4");
-    t.insert("z", "5");
-    t.insert("p", "6");
-    t.insert("f", "7");
+    graph g(7);
+    g.insert(11);
+    // g.print_adj_matrix();
+    // g.print_adj_list();
+    g.dfs();
+    g.bfs();
     return 0;
 }
+
+// 0 1 0 3 1 5 1 2 1 3 2 5 1 6 2 3 2 4 3 4 4 6
