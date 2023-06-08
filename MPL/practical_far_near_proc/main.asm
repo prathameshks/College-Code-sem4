@@ -1,7 +1,7 @@
 
 extern far_proc
 
-global filename,file_hand,buf,abuf_len
+global filename,file_hand,buf,abuf_len,char
 
 %include "macro.asm"
 
@@ -48,12 +48,12 @@ section .text
     print msg_fname,msg_fname_len
     read filename,50
     dec rax
-    mov [filename+rax],0
+    mov byte[filename+rax],0
 
     print msg_char,msg_char_len
     read char,2
     dec rax
-    mov [filename+rax],0
+    mov byte[filename+rax],0
     
     fopen filename
     cmp rax,-1h

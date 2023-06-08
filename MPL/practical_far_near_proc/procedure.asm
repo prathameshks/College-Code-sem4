@@ -1,7 +1,9 @@
 
 global far_proc
 
-externb filename,file_hand,buf,abuf_len
+;externb filename,file_hand,buf,abuf_len
+extern filename,file_hand,buf,abuf_len,char
+
 
 %include "macro.asm"
 
